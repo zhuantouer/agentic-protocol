@@ -16,6 +16,7 @@
 - `PROGRESS.md` is the sole current-state map: goal, now, coarse milestones and a few relevant links. Detailed work belongs in `worklog/YYYY-MM-DD.md`. Resume by task, not yesterday's date; no empty daily files or copied handoffs.
 - Never store secret values in `.agent-context/CONFIG.md`.
 - Keep behavioral guidance lightweight; avoid turning the plugin into a heavy workflow framework.
+- 本仓库 skill 源头是 `plugin/skills/<name>/`；规则源头是 `plugin/rules/agentic-protocol-core.mdc`。安装脚本的同步目标为 `~/.cursor/plugins/local/agentic-protocol/`、`~/.codebuddy/plugins/agentic-protocol/` 及 `~/.codex/plugins/agentic-protocol/`（Codex 另由 CLI 快照到 cache）。这是目标映射，不是实时安装状态或执行授权。范围内发现实测矛盾时先改已授权源头；未授权的源头修复/同步留证据及待办，不单改安装副本，不自动安装/reload。其他仓库的 skill 映射须在其所属项目确认，不把用户案例路径当本仓库源头。
 - Independent review **is** a core capability since 2026-09-23 (`run-review`), overturning the earlier ban on review as a plugin feature. Reviewers receive raw artifacts, not the acting agent's summary; findings are adjudicated item by item. Gates trigger by risk, never as mandatory ceremony — this is the boundary that keeps the previous "no heavy workflow" constraint intact. Subagent review is the default vehicle; the plugin still does not orchestrate multiple models or vendors.
 
 ## Review and Validation Habits

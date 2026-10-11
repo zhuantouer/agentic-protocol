@@ -204,6 +204,45 @@ class Contracts(ProjectCase):
         self.assertIn("worklog", instructions)
         self.assertIn("PROGRESS.md", instructions)
 
+    def test_external_writes_are_recorded_even_without_state_change(self):
+        body = RULE.read_text(encoding="utf-8")
+        criteria = PROGRESS_SKILL.read_text(encoding="utf-8").split("## Write criteria\n", 1)[1].split("\n## ", 1)[0]
+        self.assertIn("外部写操作不适用微小改动豁免", body)
+        self.assertIn("尝试过外部写操作", body)
+        for text in (body, criteria):
+            for outcome in ("成功、失败、无变化或结果未知", "目标对象", "请求值", "验证依据"):
+                with self.subTest(outcome=outcome):
+                    self.assertIn(outcome, text)
+
+    def test_closeout_keeps_log_and_map_writes_independent(self):
+        memory = RULE.read_text(encoding="utf-8").split("## Project Memory\n", 1)[1]
+        self.assertIn("独立判断", memory)
+        self.assertIn("仅地图字段或相关链接变化时更新", memory)
+        self.assertNotIn("更新 worklog 和 `PROGRESS.md`", memory)
+
+    def test_durable_corrections_are_not_gated_by_task_size(self):
+        body = RULE.read_text(encoding="utf-8")
+        startup = body.split("## Startup\n", 1)[1].split("\n## ", 1)[0]
+        for trigger in ("用户纠正", "被证伪假设", "实测不符"):
+            self.assertIn(trigger, startup)
+        memory = body.split("## Project Memory\n", 1)[1]
+        self.assertIn("每回合最终回复前", memory)
+        self.assertIn("影响后续工作的用户纠正", memory)
+        self.assertIn("就地更正其知识归属文件", memory)
+        self.assertIn("不重复存放", memory)
+
+    def test_skill_repairs_do_not_authorize_installed_copy_changes(self):
+        memory = RULE.read_text(encoding="utf-8").split("## Project Memory\n", 1)[1]
+        for guard in ("源头与同步目标", "CONVENTIONS.md", "限已授权范围", "不自动改安装副本", "差异证据", "未完成的留存或修复进待办", "归属和恢复条件"):
+            with self.subTest(guard=guard):
+                self.assertIn(guard, memory)
+
+    def test_external_values_are_checked_before_asking_or_writing(self):
+        body = RULE.read_text(encoding="utf-8")
+        for guard in ("单位、口径及目标映射", "可查证的先查", "暂停写入并澄清", "不靠试写猜测"):
+            with self.subTest(guard=guard):
+                self.assertIn(guard, body)
+
     def test_compactness_rule_targets_the_map_not_the_archive(self):
         memory = RULE.read_text(encoding="utf-8").split("## Project Memory\n", 1)[1]
         self.assertNotIn("`.agent-context/` 要短到", memory)

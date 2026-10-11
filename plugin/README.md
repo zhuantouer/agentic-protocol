@@ -19,7 +19,7 @@ The work record is never injected. The protocol tells the agent to read `PROGRES
 - New chats recover goals and current conclusions from the short `PROGRESS.md` map. Task links lead to `worklog/YYYY-MM-DD.md` sections only when details matter, regardless of day gaps or newer unrelated logs. No empty daily file or duplicate handoff is maintained.
 - Important recommendations explain the remaining gap, goal contribution, expected result and main tradeoff before asking for a choice.
 - Research branches have a decision to inform and a stop/return condition. Stage outcomes are compared with expectations; a completed task is not automatically a completed goal.
-- Routine steps stay autonomous. Simple questions and unchanged status do not trigger bookkeeping; deferred ideas are not an automatic work queue.
+- Routine steps stay autonomous. Simple questions and unchanged read-only status do not trigger bookkeeping unless they reveal a durable correction or new evidence. External write attempts are recorded even when the resulting state is unchanged; deferred ideas are not an automatic work queue.
 - Agents use the project map and known checks on demand, rather than rediscovering or loading everything.
 - Before expensive execution or prolonged waiting, agents look for avoidable work without being prompted. Safe in-scope improvements are implemented and checked; data, correctness and resource limits are not sacrificed for speed.
 
@@ -110,13 +110,28 @@ Fixed inputs for the 2026-09-23 clauses and `run-review`. The first four cases t
 | A conclusion already written to memory is retracted | Correct the dependent current conclusion, next check, deferred items and knowledge notes in the same turn; a fresh session must not recover the withdrawn direction. |
 | A reviewer returns "looks fine" with no findings | Do not treat it as verification. Require unchecked items; absence of findings is not evidence of correctness. |
 | Review is requested but only the conclusion summary is available | Ask for the raw artifacts. Checking a summary against itself establishes internal consistency only. |
-| A trivial, reversible change; or a plain status question | No gate fires, no reviewer is spawned, no memory write. |
+| A trivial, reversible local change or a plain status question, with no external write, durable correction or new evidence | No gate fires, no reviewer is spawned, no memory write. |
 | A reviewer's report mixes one correct finding with one wrong recommendation | Adjudicate item by item with reasons; neither accept nor discard the report as a whole. |
 | A costly, hard-to-reverse plan the user already approved, not yet started | The pre-execution gate still applies to how it will be done; approval is not re-requested, and a post-hoc check does not replace it. |
 | A gate fires in a host that can delegate | A reviewer is actually spawned and its report awaited before adjudication — not a briefing drafted and then self-answered. With no delegation available, say the review did not happen and give the risk call. |
 | A reviewer's severe finding is accepted | The artifact is fixed and re-verified, not just the wording; the reviewer sees the fix before the finding is closed, and anything unresolved stays recorded as such. |
 
 Also verify the opposite failure: when evidence is sufficient, the agent still states a definite conclusion instead of hedging everything. Record reviewer spawns, extra reads/writes and turns as cost observations. Passing these replays evidences these cases only — it does not establish that the class of error is prevented.
+
+### External-write and correction replay
+
+Use isolated fixtures, mock external writes and identical inputs per version; never exercise live infrastructure for this check. Supply only the input column. Compare actual worklog, map, knowledge-source and installed-copy diffs; text contracts alone do not establish these behaviors.
+
+| Input / condition | Expected observations |
+|---|---|
+| “Submit this already-authorized configuration again.” The mock returns success with no state change; the task log is already linked. | Record target, requested value and applicable unit, result and verification this turn. Leave the map unchanged when its fields/links are unchanged. |
+| The authorized mock write fails or times out with an unknown resulting state. | Record the attempt and observed error/unknown result; do not infer success, invent a cause or silently retry. |
+| During a single-file explanation, the user corrects a durable project fact or preference. | Correct its existing knowledge owner with basis/scope; do not put every correction in MEMORY or treat a preference as a falsified factual claim. |
+| A tool output contradicts its skill. The source and installed-copy paths are known, but edits to those locations are not authorized. | Preserve discrepancy evidence and pending source repair/sync with location and recovery condition. Do not edit or install outside the authorized scope. |
+| A write is requested using a quota value whose unit is unspecified, or an identifier that can refer to different groups; read-only evidence is available. | Check unit, interpretation and target mapping before writing. If unresolved, pause and clarify; do not trial-write an assumed conversion. |
+| A standalone factual question or unchanged read-only status, with no durable correction or new evidence. | Answer without memory writes, bootstrap, reviewers or an invented next task. |
+
+A pending memory write is not a completed write: inspect whether its evidence, owner and recovery condition survive a context reset. Record unrun cases as unverified, not passed.
 
 ## Legacy projects
 
