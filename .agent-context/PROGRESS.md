@@ -6,7 +6,7 @@
 **当前子目标**：评审并修补外部写/纠正漏记触发。Assumption for acceptance：四类外部写结果均本回合留存；简单回合的 durable 纠正与实测矛盾可留存；日志/地图独立、知识单一归属且不越权同步；无新事实的简单只读不写。文本层完成，实际行为待隔离回放；既有 goal/evidence 与 review-gate 验证仍开放（见 Next Check）。
 
 ## Constraints
-One current-state map; daily logs own detail. No separate handoff, automatic daily files or calendar-based resume. Preserve capability and decisive context. Do not auto-commit or refresh installed plugins; leave unrelated plugin caches untouched. Preferences: CONVENTIONS.md.
+One current-state map; daily logs own detail. No separate handoff, automatic daily files or calendar-based resume. Preserve capability and decisive context. Commit validated milestones by default (scoped), push only on request; do not refresh installed plugins; leave unrelated plugin caches untouched. Preferences: CONVENTIONS.md.
 
 ## Current State
 2026-10-11 A review of C's memory-trigger diff：**source 文本层修补完成，行为未验证**。外部写尝试、durable 纠正与实测矛盾有留存入口；地图/日志独立，源头修复/同步受授权限制。47/47 tests OK，validator passed（body 4337 超 4200 审查线，未超整文件硬限制），diff check passed。独立复核确认三项关键缺口文本层关闭，未独立复测命令；六例隔离 mock 回放尚未执行。未更新宿主安装、未新增 hook。 [裁决与验证](worklog/2026-10-11.md#a-review-of-memory-write-triggers)
