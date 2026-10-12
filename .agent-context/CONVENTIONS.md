@@ -9,7 +9,7 @@
 ## User Preferences
 - User wants observable success signals, surgical edits and verifiable next actions without boilerplate forms. The 2026-09-16 goal-alignment request permits a purposeful objective summary; avoid a mandatory goal tree.
 - Reduce total unnecessary work and token cost without losing capability or decisive context. Proactively consider algorithm, implementation and workflow efficiency throughout tasks. Weigh likely cumulative reuse savings against investigation, coding/change scope, equivalence-validation difficulty, risk, maintenance and restart costs. Optimize safe in-scope opportunities when worthwhile; short waits may be better than costly changes. Do not invent future reuse or wait for the user to spot waste.
-- User wants a commit recommendation at each validated milestone so work stays traceable; the agent proposes and names the scope, the user authorizes.
+- At each validated milestone the agent commits by default, scoped to that milestone's changes, so work stays traceable; push only on explicit user request (user decision 2026-10-12, supersedes recommend-only).
 - Evaluate the whole design, not isolated clause patches. Findings carry recommendations; when reviewers disagree, distinguish accepted points, rejected points with reasons and decisions requiring the user.
 
 ## Project Boundaries

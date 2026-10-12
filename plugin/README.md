@@ -151,7 +151,7 @@ Do **not** symlink from outside `~/.cursor/plugins/local/`; Cursor rejects it. T
 
 Commit the useful `PROGRESS.md` map, referenced `worklog/` evidence and shared knowledge intentionally, excluding secrets. Commit links with their target logs; the map and log carry different facts, not duplicate local snapshots.
 
-At a validated milestone the agent recommends a commit and names what it would cover; it does not commit unless you ask.
+At a validated milestone the agent commits by default, scoped to that milestone's changes; it pushes only when you ask.
 
 ## Validation
 
