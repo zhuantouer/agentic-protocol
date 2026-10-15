@@ -40,7 +40,7 @@ The smoke tests only prove the scripts work, not that Codex runs them. To check 
 - Local install: `./scripts/install-local.sh [cursor|codex|codebuddy|all]` (defaults to `cursor`).
 
 ## Custom Scripts
-- `./scripts/install-local.sh` — copies the plugin to `~/.cursor/plugins/local/` (Cursor), `~/.codex/plugins/` plus a merged entry in `~/.agents/plugins/marketplace.json` (Codex), and/or `~/.codebuddy/plugins/` plus `codebuddy plugin install` from a local marketplace under `~/.codebuddy/plugin-marketplaces/` when the CLI is present (CodeBuddy). Never point that marketplace at the repository: a directory marketplace is used in place, so the rule would load from the source tree.
+- `./scripts/install-local.sh` — copies the plugin to `~/.cursor/plugins/local/` (Cursor), `~/.codex/plugins/` plus a merged entry in `~/.agents/plugins/marketplace.json` (Codex), and/or `~/.codebuddy/plugins/marketplaces/agentic-protocol-marketplace/plugins/agentic-protocol/` (CodeBuddy). The CodeBuddy `marketplace.json` source is `./plugins/agentic-protocol`; a path that leaves the marketplace directory is rejected by CodeBuddy 5.0. The script updates only the `agentic-protocol-marketplace` key in `~/.codebuddy/plugins/known_marketplaces.json`, and runs `codebuddy plugin install` when the CLI is on `PATH`. Never point that marketplace at the repository: a directory marketplace is used in place, so the rule would load from the source tree.
 - `node scripts/validate-template.mjs` — validates every host's manifests, marketplaces, rules, skills, hooks, and referenced assets; asserts shared content stays host-neutral and that host event names do not cross over.
 
 ## Command Notes

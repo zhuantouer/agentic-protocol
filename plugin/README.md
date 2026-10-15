@@ -141,7 +141,7 @@ A pending memory write is not a completed write: inspect whether its evidence, o
 
 ```bash
 ./scripts/install-local.sh            # Cursor → ~/.cursor/plugins/local/
-./scripts/install-local.sh codebuddy  # CodeBuddy → ~/.codebuddy/plugins/
+./scripts/install-local.sh codebuddy  # CodeBuddy → ~/.codebuddy/plugins/marketplaces/agentic-protocol-marketplace/plugins/
 ./scripts/install-local.sh all
 ```
 

@@ -20,11 +20,13 @@ CODEX_SOURCE_PATH="./.codex/plugins/${PLUGIN_NAME}"
 # renamed plugin does not sit next to a stale copy.
 LEGACY_PLUGIN_NAMES="agent-context agent-context-codex"
 CODEBUDDY_MARKETPLACE_NAME="agentic-protocol-marketplace"
-# A directory marketplace is referenced in place (installLocation = source path),
-# so the manifest must live outside the repository and point at the installed
-# copy under ~/.codebuddy/plugins/ — pointing it at the repo makes CodeBuddy
-# load the rule from the source tree, and reinstalling never reaches the host.
-CODEBUDDY_MARKETPLACE_DIR="${HOME}/.codebuddy/plugin-marketplaces/${CODEBUDDY_MARKETPLACE_NAME}"
+# A directory marketplace is referenced in place, so the manifest must not live
+# in this repository. CodeBuddy 5.0 also rejects a plugin source that resolves
+# outside the marketplace directory (the UI only shows a generic error). Match
+# the official marketplace layout: the plugin copy sits inside the marketplace,
+# and marketplace.json points at ./plugins/<name>.
+CODEBUDDY_MARKETPLACE_DIR="${HOME}/.codebuddy/plugins/marketplaces/${CODEBUDDY_MARKETPLACE_NAME}"
+CODEBUDDY_PLUGIN_DIR="${CODEBUDDY_MARKETPLACE_DIR}/plugins/${PLUGIN_NAME}"
 LEGACY_CODEBUDDY_MARKETPLACES="agent-context-marketplace"
 
 copy_plugin() {
@@ -141,10 +143,9 @@ codebuddy_cli() {
   return 1
 }
 
-# CodeBuddy, like Codex, installs through a marketplace, but a directory
-# marketplace is used in place rather than cloned. Serve the installed copy
-# from a manifest under ~/.codebuddy/plugin-marketplaces/ so the host loads
-# ~/.codebuddy/plugins/<name>, never this repository.
+# CodeBuddy installs through a marketplace, and a directory marketplace is used
+# in place rather than cloned. The plugin source has to stay inside that
+# directory; a relative path that escapes it is rejected by the 5.0 path check.
 write_codebuddy_marketplace() {
   MARKETPLACE_DIR="$CODEBUDDY_MARKETPLACE_DIR" \
   MARKETPLACE_NAME="$CODEBUDDY_MARKETPLACE_NAME" \
@@ -158,6 +159,11 @@ import pathlib
 plugin = json.loads(
     pathlib.Path(os.environ["PLUGIN_SRC"], ".codebuddy-plugin", "plugin.json").read_text(encoding="utf-8")
 )
+source = "./plugins/" + os.environ["PLUGIN_NAME"]
+marketplace = pathlib.Path(os.environ["MARKETPLACE_DIR"]).resolve()
+resolved = (marketplace / source).resolve()
+if marketplace != resolved and marketplace not in resolved.parents:
+    raise SystemExit(f"plugin source escapes the marketplace: {source} -> {resolved}")
 data = {
     "name": os.environ["MARKETPLACE_NAME"],
     "owner": {"name": "local"},
@@ -168,19 +174,80 @@ data = {
     "plugins": [
         {
             "name": os.environ["PLUGIN_NAME"],
-            # Relative to the marketplace directory; ../.. is ~/.codebuddy.
-            "source": "../../plugins/" + os.environ["PLUGIN_NAME"],
+            "source": source,
             "description": plugin["description"],
             "version": plugin["version"],
             "category": "Productivity",
         }
     ],
 }
-root = pathlib.Path(os.environ["MARKETPLACE_DIR"], ".codebuddy-plugin")
+root = marketplace / ".codebuddy-plugin"
 root.mkdir(parents=True, exist_ok=True)
 path = root / "marketplace.json"
 path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 print(f"  Local marketplace manifest written: {path}")
+print(f"  Plugin source stays inside the marketplace: {resolved}")
+PY
+}
+
+# The pre-5.0 install kept the plugin beside marketplaces/ and the manifest
+# under plugin-marketplaces/, then pointed source at ../../plugins/<name>.
+# Drop those copies so a reload cannot keep resolving the rejected path.
+retire_codebuddy_legacy_paths() {
+  local legacy
+  rm -rf "${HOME}/.codebuddy/plugins/${PLUGIN_NAME}"
+  rm -rf "${HOME}/.codebuddy/plugin-marketplaces/${CODEBUDDY_MARKETPLACE_NAME}"
+  for legacy in $LEGACY_CODEBUDDY_MARKETPLACES; do
+    rm -rf "${HOME}/.codebuddy/plugin-marketplaces/${legacy}"
+    rm -rf "${HOME}/.codebuddy/plugins/${legacy}"
+  done
+  if [ -d "${HOME}/.codebuddy/plugin-marketplaces" ]; then
+    rmdir "${HOME}/.codebuddy/plugin-marketplaces" 2>/dev/null || true
+  fi
+}
+
+# `codebuddy` is often absent from PATH inside the IDE app. Record the
+# directory marketplace anyway, and leave every other marketplace entry as it
+# was. A later CLI add of the same directory overwrites only this key.
+register_codebuddy_marketplace() {
+  HOME="$HOME" \
+  MARKETPLACE_DIR="$CODEBUDDY_MARKETPLACE_DIR" \
+  MARKETPLACE_NAME="$CODEBUDDY_MARKETPLACE_NAME" \
+  LEGACY_NAMES="$LEGACY_CODEBUDDY_MARKETPLACES" \
+  python3 - <<'PY'
+import json
+import os
+import pathlib
+from datetime import datetime, timezone
+
+path = pathlib.Path(os.environ["HOME"]) / ".codebuddy" / "plugins" / "known_marketplaces.json"
+marketplace_dir = str(pathlib.Path(os.environ["MARKETPLACE_DIR"]).resolve())
+name = os.environ["MARKETPLACE_NAME"]
+legacy = [item for item in os.environ["LEGACY_NAMES"].split() if item]
+
+data = {}
+if path.exists() and path.stat().st_size > 0:
+    try:
+        loaded = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise SystemExit(f"{path} is not valid JSON, refusing to overwrite: {error}")
+    if not isinstance(loaded, dict):
+        raise SystemExit(f"{path} is not a JSON object, refusing to overwrite")
+    data = loaded
+
+for old in legacy:
+    data.pop(old, None)
+data[name] = {
+    "type": "directory",
+    "source": {"source": "directory", "path": marketplace_dir},
+    "installLocation": marketplace_dir,
+    "description": "Marketplace from " + marketplace_dir,
+    "lastUpdated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z",
+    "autoUpdate": False,
+}
+path.parent.mkdir(parents=True, exist_ok=True)
+path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+print(f"  Marketplace registry updated: {path} key {name}")
 PY
 }
 
@@ -189,7 +256,7 @@ PY
 activate_codebuddy_plugin() {
   local cli
   if ! cli="$(codebuddy_cli)"; then
-    echo "  codebuddy CLI not found; run: codebuddy --plugin-dir ${PLUGIN_SRC}" >&2
+    echo "  codebuddy CLI not found; marketplace files are in place. Reload plugins in CodeBuddy." >&2
     return 0
   fi
   local legacy
@@ -202,13 +269,14 @@ activate_codebuddy_plugin() {
 }
 
 install_codebuddy() {
-  local dest="${HOME}/.codebuddy/plugins/${PLUGIN_NAME}"
-  copy_plugin "$dest"
-  echo "Installed ${PLUGIN_NAME} for CodeBuddy: ${dest}"
+  copy_plugin "$CODEBUDDY_PLUGIN_DIR"
+  echo "Installed ${PLUGIN_NAME} for CodeBuddy: ${CODEBUDDY_PLUGIN_DIR}"
   write_codebuddy_marketplace
+  retire_codebuddy_legacy_paths
+  register_codebuddy_marketplace
   activate_codebuddy_plugin
   echo "  Next: /reload-plugins in CodeBuddy, or restart CodeBuddy IDE"
-  echo "  Verify: /plugin (Installed tab) or: codebuddy --plugin-dir ${dest}"
+  echo "  Verify: /plugin (Installed tab). Rules still need the CodeBuddy build that restores .mdc plugin rules."
   echo "  Protocol comes from the plugin's rules/; no session hook is needed"
 }
 

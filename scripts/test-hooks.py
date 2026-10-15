@@ -498,6 +498,56 @@ class PackagingContracts(ProjectCase):
         for name in ("rules/agentic-protocol-core.mdc", "hooks/scripts/session-context.py", "README.md"):
             self.assertEqual((installed / name).read_bytes(), (self.package / name).read_bytes())
 
+    @unittest.skipIf(os.name == "nt", "Local installer requires Bash")
+    def test_codebuddy_plugin_source_stays_inside_its_marketplace(self):
+        scripts = self.project / "scripts"
+        scripts.mkdir()
+        shutil.copy2(REPO_ROOT / "scripts" / "install-local.sh", scripts / "install-local.sh")
+        home = self.project / "test home"
+        official = home / ".codebuddy/plugins/marketplaces/codebuddy-plugins-official/plugins/pdf/keep.txt"
+        official.parent.mkdir(parents=True)
+        official.write_text("keep")
+        legacy_plugin = home / ".codebuddy/plugins/agentic-protocol/rules/old.mdc"
+        legacy_market = home / ".codebuddy/plugin-marketplaces/agentic-protocol-marketplace/old.json"
+        legacy_plugin.parent.mkdir(parents=True)
+        legacy_market.parent.mkdir(parents=True)
+        legacy_plugin.write_text("old")
+        legacy_market.write_text("old")
+        registry = home / ".codebuddy/plugins/known_marketplaces.json"
+        registry.write_text(json.dumps({
+            "codebuddy-plugins-official": {
+                "installLocation": str(official.parents[2]),
+            },
+            "agent-context-marketplace": {"installLocation": "/tmp/gone"},
+        }) + "\n")
+        result = subprocess.run(
+            ["bash", str(scripts / "install-local.sh"), "codebuddy"], cwd=self.project,
+            env=dict(os.environ, HOME=str(home)), capture_output=True, text=True, timeout=30,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        marketplace = home / ".codebuddy/plugins/marketplaces/agentic-protocol-marketplace"
+        installed = marketplace / "plugins/agentic-protocol"
+        manifest = json.loads((marketplace / ".codebuddy-plugin/marketplace.json").read_text())
+        source = manifest["plugins"][0]["source"]
+        self.assertEqual(source, "./plugins/agentic-protocol")
+        resolved = (marketplace / source).resolve()
+        self.assertEqual(resolved, installed.resolve())
+        self.assertTrue(marketplace.resolve() in resolved.parents)
+        self.assertEqual(
+            (installed / "rules/agentic-protocol-core.mdc").read_bytes(),
+            (self.package / "rules/agentic-protocol-core.mdc").read_bytes(),
+        )
+        self.assertFalse(legacy_plugin.exists())
+        self.assertFalse((home / ".codebuddy/plugin-marketplaces").exists())
+        self.assertEqual(official.read_text(), "keep")
+        recorded = json.loads(registry.read_text())
+        self.assertEqual(recorded["codebuddy-plugins-official"]["installLocation"], str(official.parents[2]))
+        self.assertNotIn("agent-context-marketplace", recorded)
+        self.assertEqual(
+            recorded["agentic-protocol-marketplace"]["installLocation"],
+            str(marketplace.resolve()),
+        )
+
 
 class VersionLockstep(unittest.TestCase):
     """VERSION is the single source of truth; a hand-edited manifest must fail."""
