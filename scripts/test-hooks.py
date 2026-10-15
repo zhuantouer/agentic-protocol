@@ -362,6 +362,19 @@ class Contracts(ProjectCase):
         self.assertNotIn("撤回与降级同样是结论，需同等证据", body)
         self.assertIn("原因未知", body)
 
+    def test_deliverables_keep_clean_final_state_and_mermaid_diagrams(self):
+        body = RULE.read_text(encoding="utf-8")
+        execution = body.split("## Execution\n", 1)[1].split("\n## ", 1)[0]
+        for clause in (
+            "干净的终态设计",
+            "不残留对话中被撤回的错误",
+            "有复发风险的被证伪假设仅归入 `worklog/` 或 `MEMORY.md`",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, execution)
+        style = body.split("## Response Style\n", 1)[1].split("\n## ", 1)[0]
+        self.assertIn("需要画图时用 Mermaid，不用 ASCII art", style)
+
     def test_retired_workflow_is_not_advertised(self):
         self.assertFalse((PLUGIN / "skills" / "handoff").exists())
         surfaces = list((PLUGIN / "skills").rglob("*.md")) + [REPO_ROOT / "README.md", PLUGIN / "README.md"]
