@@ -6,7 +6,7 @@
 **当前子目标**：领域知识的主动沉淀与按需复用；范围、验收与下一决策见 Other Goals。主目标及既有行为验收不变。
 
 ## Other Goals
-- 领域知识闭环（所属 Objective）：按任务找到并复用知识来源、方法/pipeline、动作前后检查及领域复核条件。Assumption for acceptance：隔离跨会话任务能在无用户提醒时提炼并复用适用知识，能处理领域/版本错配与冲突，不复制正文、不越权或生成空文件。**候选设计已评审，未实施/未行为验收**；下一决策是最小规则/skill 文本范围，暂不扩建目录、工具或共享库。[用户方向与裁决](worklog/2026-10-16.md#domain-knowledge-discovery-and-reuse)
+- 领域知识闭环（所属 Objective）：按任务找到并复用知识来源、方法/pipeline、动作前后检查及领域复核条件。Assumption for acceptance：隔离跨会话任务能在无用户提醒时提炼并复用适用知识，能处理领域/版本错配与冲突，不复制正文、不越权或生成空文件。**候选设计已评审，未实施/未行为验收**；下一决策：是否采用 `knowledge/<domain>.md` 按领域聚合、`CONVENTIONS.md` 只留跨领域约定与路由（用户提议，专家 C 建议采用，[布局提议](worklog/2026-10-16.md#knowledge-directory-layout-proposal)）。[用户方向与裁决](worklog/2026-10-16.md#domain-knowledge-discovery-and-reuse)
 - 外部写/纠正漏记触发（所属 Objective，等待隔离回放）：Assumption for acceptance：四类外部写结果均本回合留存；简单回合的 durable 纠正与实测矛盾可留存；日志/地图独立、知识单一归属且不越权同步；无新事实的简单只读不写。文本层完成，实际行为待隔离回放；下一检查保留于 Next Check，既有 goal/evidence 与 review-gate 验证仍开放。
 
 ## Closed Questions
