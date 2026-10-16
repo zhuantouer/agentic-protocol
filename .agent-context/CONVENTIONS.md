@@ -11,6 +11,7 @@
 - Reduce total unnecessary work and token cost without losing capability or decisive context. Proactively consider algorithm, implementation and workflow efficiency throughout tasks. Weigh likely cumulative reuse savings against investigation, coding/change scope, equivalence-validation difficulty, risk, maintenance and restart costs. Optimize safe in-scope opportunities when worthwhile; short waits may be better than costly changes. Do not invent future reuse or wait for the user to spot waste.
 - At each validated milestone the agent commits by default, scoped to that milestone's changes, so work stays traceable; push only on explicit user request (user decision 2026-10-12, supersedes recommend-only).
 - Evaluate the whole design, not isolated clause patches. Findings carry recommendations; when reviewers disagree, distinguish accepted points, rejected points with reasons and decisions requiring the user.
+- 用户希望 agent 主动沉淀并按需复用所接触领域的可靠知识来源、工作方法与 pipeline、常用动作、动作前后 checklist 和复核条件，不把领域学习仅当作失败后的 MEMORY/worklog；不限定为程序或命令。生命周期风险应计入已知下游用途，但不扩成普遍复核（2026-10-16 用户方向）。候选文件路由、工具和跨项目共享方案尚未确认。[原话与设计边界](worklog/2026-10-16.md#domain-knowledge-discovery-and-reuse)
 
 ## Project Boundaries
 - `PROGRESS.md` is the sole current-state map: goal, now, coarse milestones and a few relevant links. Detailed work belongs in `worklog/YYYY-MM-DD.md`. Resume by task, not yesterday's date; no empty daily files or copied handoffs.
