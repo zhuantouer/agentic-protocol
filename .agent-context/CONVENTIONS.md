@@ -11,6 +11,7 @@
 - Reduce total unnecessary work and token cost without losing capability or decisive context. Proactively consider algorithm, implementation and workflow efficiency throughout tasks. Weigh likely cumulative reuse savings against investigation, coding/change scope, equivalence-validation difficulty, risk, maintenance and restart costs. Optimize safe in-scope opportunities when worthwhile; short waits may be better than costly changes. Do not invent future reuse or wait for the user to spot waste.
 - At each validated milestone the agent commits by default, scoped to that milestone's changes, so work stays traceable; push only on explicit user request (user decision 2026-10-12, supersedes recommend-only).
 - Evaluate the whole design, not isolated clause patches. Findings carry recommendations; when reviewers disagree, distinguish accepted points, rejected points with reasons and decisions requiring the user.
+- 规则与 skill 只写能覆盖一类问题的通用原则；不要把单个案例的场景词、步骤或特例（如定时、触发器、上传顺序）写进条款，否则每个新 case 都要加一条（2026-10-16 用户纠正）。案例细节归该领域的知识或 skill。修改前先问：这句话去掉案例名词后还成立吗？
 - 用户希望 agent 主动沉淀并按需复用所接触领域的可靠知识来源、工作方法与 pipeline、常用动作、动作前后 checklist 和复核条件，不把领域学习仅当作失败后的 MEMORY/worklog；不限定为程序或命令。生命周期风险应计入已知下游用途，但不扩成普遍复核（2026-10-16 用户方向）。候选文件路由、工具和跨项目共享方案尚未确认。[原话与设计边界](worklog/2026-10-16.md#domain-knowledge-discovery-and-reuse)
 
 ## Project Boundaries
