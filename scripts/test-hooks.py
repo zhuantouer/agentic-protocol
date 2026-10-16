@@ -338,6 +338,34 @@ class Contracts(ProjectCase):
         self.assertIn("已采纳", skill)
         self.assertIn("宿主支持委派时实际派出", body)
 
+    def test_lifecycle_risk_includes_known_downstream_consequences(self):
+        body = RULE.read_text(encoding="utf-8")
+        execution = body.split("## Execution\n", 1)[1].split("\n## ", 1)[0]
+        review = next(line for line in execution.splitlines() if "按风险做一次独立复核" in line)
+        self.assertIn("当前操作及已知后续使用的后果", review)
+        self.assertIn("不以当前一步可重做作为豁免依据", review)
+        self.assertNotIn("生效前不会再经人", review)
+        for case_specific in ("定时", "触发器", "上传顺序"):
+            self.assertNotIn(case_specific, review, case_specific)
+
+    def test_effective_downstream_check_changes_timing_not_risk_exemption(self):
+        skill = (PLUGIN / "skills" / "run-review" / "SKILL.md").read_text(encoding="utf-8")
+        gates = skill.split("## Gates\n", 1)[1].split("\n## ", 1)[0]
+        self.assertIn("有效后续核对只用于安排复核时机或避免重复复核", gates)
+        self.assertIn("生效前执行", gates)
+        self.assertIn("实际生效产物", gates)
+        self.assertIn("覆盖相关风险", gates)
+        self.assertIn("发现问题能阻止生效", gates)
+        self.assertIn("未覆盖的风险仍按需复核", gates)
+        self.assertIn("不能假定用户会检查", gates)
+        self.assertIn("不能以自查替代独立复核", gates)
+        g1 = next(line for line in gates.splitlines() if line.startswith("| G1 "))
+        self.assertIn("影响面大", g1)
+        self.assertIn("或使这些后果可以发生的动作前", g1)
+        self.assertNotIn("产物交出", gates)
+        self.assertIn("可逆、便宜、影响面小的改动", gates)
+        self.assertIn("简单问答与只读状态查询", gates)
+
     def test_prior_authorization_does_not_retire_the_pre_execution_gate(self):
         # A plan approved but not yet executed was the recorded gap: an agent could
         # decide the "before approval" moment had passed and skip straight to a
