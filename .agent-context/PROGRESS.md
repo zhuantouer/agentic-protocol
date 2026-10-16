@@ -5,6 +5,9 @@
 **当前验收标准**：Understandable decisions, evidence-based conclusions and preserved work history without duplicate bookkeeping or routine full-history reads. Assumption for the current revision: the fixed goal/evidence replay preserves each goal's criteria and writes only justified state/evidence; structural tests alone are insufficient.
 **当前子目标**：评审并修补外部写/纠正漏记触发。Assumption for acceptance：四类外部写结果均本回合留存；简单回合的 durable 纠正与实测矛盾可留存；日志/地图独立、知识单一归属且不越权同步；无新事实的简单只读不写。文本层完成，实际行为待隔离回放；既有 goal/evidence 与 review-gate 验证仍开放（见 Next Check）。
 
+## Closed Questions
+- 2026-10-16 — topo 上传与无人值守启动案例（所属 Objective）：**改进建议已回答，未实施/未行为验收**。Assumption for acceptance：区分已有规则未执行、文本缺口和证据未知，给最小可执行建议且不扩大轻量场景流程。案例仅来自用户复盘；源码核对与独立评审支持优先澄清生命周期风险、领域动作门禁及证据/消费版本绑定，不支持模型能力因果结论。既有开放目标不关闭。[证据与裁决](worklog/2026-10-16.md#upload-and-unattended-start-case-review)
+
 ## Constraints
 One current-state map; daily logs own detail. No separate handoff, automatic daily files or calendar-based resume. Preserve capability and decisive context. Commit validated milestones by default (scoped), push only on request; do not refresh installed plugins; leave unrelated plugin caches untouched. Preferences: CONVENTIONS.md.
 
@@ -40,6 +43,7 @@ Confirm whether 2.0.1 was intended as 0.2.1 — the previous release was 0.2.0, 
 - 2026-06-26 → 08-03 — Plugin foundation, multi-host packaging and namespaced project memory. [Original date-range records](worklog/2026-09-16.md#imported-date-ranges).
 
 ## Deferred
+- topo 案例候选修补（未授权实施）：规则风险段与 `run-review` 豁免按已知高影响下游用途澄清；领域校验/动作门禁需先确认案例项目源头、真实入口及版本语义。用户决定范围后再做隔离缺陷注入、拒绝放行与轻量对照，不用线上资源、不自动安装。[恢复条件](worklog/2026-10-16.md#recommendations-and-next-decision)
 Revisit host extensions, optional quality layers and historical-memory compaction only for a concrete need or measured failure. [Preserved opportunities and conditions](worklog/2026-09-16.md#deferred-opportunities).
 - Renaming the plugin `agent-context`: rejected on 2026-08-03 (all eight candidates taken by competitors), **done on 2026-09-20** as `agentic-protocol` — plugin id, package directory, marketplace ids and rule file changed; `.agent-context/` and both skill ids keep their names. Hosts reinstalled. Marketplace id availability is **moot since 2026-09-20**: distribution was dropped, so publishing needs the three indexes and the `plugins/<name>` nesting restored first; the `homepage` owner mismatch (`thanezh` vs `zhuantouer`) likewise only matters if publishing returns. Version numbering is a separate open item, see Next Check. [Rename](worklog/2026-09-20.md#plugin-renamed-to-agentic-protocol), [Flatten](worklog/2026-09-20.md#repository-flattened-to-one-plugin-package-marketplace-distribution-dropped)
 - Flattening `plugin/` to the repository root: **deferred, condition known**. A 2026-09-20 survey of superpowers / Claude Code / Cursor / agent-plugins.org found every install path (marketplace `source: "./"`, git-URL installs) resolves the plugin from the repo root, so nesting blocks publishing — but distribution was dropped the same day, so the benefit is currently zero and the cost is an include/exclude list for the copy installer. Revisit only if marketplace or git-URL distribution is wanted again. No-regret moves identified but not done: root Agent-Plugins `plugin.json`, per-harness exclusion list, version-bump script, written porting SOP. [Survey](worklog/2026-09-20.md#layout-survey-how-popular-multi-harness-plugins-organize-their-repos)
