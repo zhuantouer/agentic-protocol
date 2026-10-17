@@ -1,0 +1,49 @@
+{
+  "name": "dsh-agentic-protocol",
+  "version": "2.0.1",
+  "description": "Agentic Protocol for DeepSeek Harness: project memory in plain markdown, as a native Cordis bundle — on-demand skills plus the protocol as a system-prompt section.",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.mjs",
+    "cordis.patch.yml",
+    "skills",
+    "rules",
+    "README.md"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "thanezh"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "context",
+    "memory",
+    "project-memory",
+    "goals",
+    "work-log",
+    "progress",
+    "zero-dependency"
+  ],
+  "homepage": "https://github.com/zhuantouer/agentic-protocol#deepseek-harness",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhuantouer/agentic-protocol.git",
+    "directory": "dsh"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

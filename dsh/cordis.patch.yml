@@ -1,0 +1,10 @@
+# dsh bundle patch — mounted by the profile that installs this package.
+#
+# `dsh plugin --profile <name> add <this package>` runs pnpm in the profile and
+# then appends this package to `dsh.profile.bundles`, because its package.json
+# declares `dsh.bundle.patch`. The loader applies the entry below to the
+# composed tree; the module it names registers the skill provider and the
+# protocol prompt section.
+- insert:
+    - id: agentic-protocol
+      name: 'dsh-agentic-protocol'
