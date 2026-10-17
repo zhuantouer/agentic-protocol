@@ -85,6 +85,26 @@ The plain `dsh` CLI refuses `desktop` — the app owns that profile — and so d
 `--dump-config` for it; verify the install from the Plugins page or the profile's
 `package.json`.
 
+### Install from the repository
+
+The Plugins page also installs straight from this GitHub repository, with no checkout
+and no `pnpm` on `PATH`:
+
+```text
+github:zhuantouer/agentic-protocol#path:/dsh
+```
+
+`#path:` is pnpm's monorepo subdirectory form; the package lives at `dsh/`. pnpm falls
+back to SSH when git-over-HTTPS is unavailable, so the lockfile records
+`git+ssh://git@github.com/zhuantouer/agentic-protocol.git#<commit>&path:/dsh`. An
+explicit `git+ssh://…` URL, an absolute local directory, and a packed tarball are
+equally valid specs.
+
+A git install is a snapshot: updating means installing again at the new ref, unlike the
+`link:` install the Node installer produces. Installing over a `link:` dependency
+replaces it in place, so no uninstall is needed, but a running app can keep the old
+module path until it is restarted.
+
 ## Layout
 
 | Path | Role |
@@ -131,4 +151,5 @@ only way to observe the behavior end to end.
 ## Scope
 
 Skills and the protocol prompt section are supported. Hooks are not registered, and
-the bundle publishes nothing to npm — this repository installs from a local copy only.
+the bundle publishes nothing to npm — it installs from this repository, either a local
+checkout or the GitHub subdirectory above.
