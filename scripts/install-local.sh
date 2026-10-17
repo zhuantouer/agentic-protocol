@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install agentic-protocol locally for testing.
 #
-#   ./scripts/install-local.sh [cursor|codex|codebuddy|all]   (default: cursor)
+#   ./scripts/install-local.sh [cursor|codex|codebuddy|dsh|all]   (default: cursor)
 #
 # Cursor rejects symlinks whose target is outside ~/.cursor/plugins/local/
 # (see Cursor Plugins log: loadUserLocalPlugin ... rejected: symlink target is outside).
@@ -293,6 +293,11 @@ case "$HOST" in
   codebuddy)
     install_codebuddy
     ;;
+  dsh)
+    # The bundle installer is Node so it also runs on Windows, where the
+    # desktop app is the only host and `bash` is not the native shell.
+    node "${REPO_ROOT}/scripts/install-dsh.mjs"
+    ;;
   all)
     install_cursor
     echo
@@ -301,7 +306,7 @@ case "$HOST" in
     install_codebuddy
     ;;
   *)
-    echo "Usage: $0 [cursor|codex|codebuddy|all]" >&2
+    echo "Usage: $0 [cursor|codex|codebuddy|dsh|all]" >&2
     exit 1
     ;;
 esac

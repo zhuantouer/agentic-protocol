@@ -1,8 +1,8 @@
 # agentic-protocol
 
-**Keep the goal, the conclusions, and the work that led there.** `agentic-protocol` gives AI-assisted projects a durable work record in plain Markdown, shared by [Cursor](https://cursor.com/cn/docs/plugins), Codex, and [CodeBuddy](https://www.codebuddy.cn/docs/cli/plugins).
+**Keep the goal, the conclusions, and the work that led there.** `agentic-protocol` gives AI-assisted projects a durable work record in plain Markdown, shared by [Cursor](https://cursor.com/cn/docs/plugins), Codex, [CodeBuddy](https://www.codebuddy.cn/docs/cli/plugins), and [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
 
-One protocol, two skills, and lightweight Python-standard-library hooks. No index, database, daemon or MCP server. The agent maintains `.agent-context/PROGRESS.md`; new sessions read its current sections directly. There is no separate handoff to prepare or keep in sync.
+One protocol, three skills, and lightweight Python-standard-library hooks. No index, database, daemon or MCP server. The agent maintains `.agent-context/PROGRESS.md`; new sessions read its current sections directly. There is no separate handoff to prepare or keep in sync.
 
 ## What it solves
 
@@ -73,6 +73,7 @@ git clone https://github.com/zhuantouer/agentic-protocol.git ~/workspace/agentic
 cd ~/workspace/agentic-protocol
 ./scripts/install-local.sh          # Cursor (default)
 ./scripts/install-local.sh codebuddy
+./scripts/install-local.sh dsh      # DeepSeek Harness (every profile)
 ./scripts/install-local.sh all      # Cursor + Codex + CodeBuddy
 ```
 
@@ -82,6 +83,8 @@ cd ~/workspace/agentic-protocol
 
 **Codex:** copies into `~/.codex/plugins/` and runs `codex plugin add agentic-protocol@personal`. Restart Codex and trust plugin hooks; Codex has no `rules/` slot, so without trust there is no protocol injection.
 
+**DeepSeek Harness:** the bundle at [`dsh/`](dsh/README.md) is a Cordis plugin rather than a rules directory. The installer copies it to `$DSH_HOME/plugins/agentic-protocol`, links it into every profile that has a `package.json`, and adds it to `dsh.profile.bundles`. The rule body then registers as a system-prompt section and the three skills join the session catalog through `ctx.skills`. The app can apply the profile live; if a new session does not show the section, quit and reopen DeepSeek Harness.
+
 ## Skills
 
 Skills follow the [Agent Skills](https://cursor.com/cn/docs/skills) format (`skills/<name>/SKILL.md`). The agent invokes them automatically when relevant, or you can trigger them manually with `/skill-name` in chat.
@@ -90,6 +93,7 @@ Skills follow the [Agent Skills](https://cursor.com/cn/docs/skills) format (`ski
 |-------|--------------|--------|
 | `bootstrap-context` | Missing context before substantive work; knowledge updates (structure, commands, config, conventions, decisions) | `/bootstrap-context` |
 | `update-progress` | Goal/plan changes, stage outcomes; status queries without rewriting unchanged state | `/update-progress` |
+| `run-review` | Before an irreversible or costly execution, after landing work, or before a claim enters project memory — dispatches an independent review of the raw artifacts | `/run-review` |
 
 ## Rules
 
@@ -144,7 +148,7 @@ Cursor, Codex, and CodeBuddy work today. Claude Code, OpenCode, and Pi do not ye
 Inspired by AgenticMetaEngineering (Tencent-internal, by r***hou), [Superpowers](https://github.com/obra/superpowers) and [andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills), but **radically simplified**:
 
 - **No 8-stage workflow.** No gate audits. No mandatory worktrees.
-- **No 20+ plugins.** One plugin, one rule file, two skills.
+- **No 20+ plugins.** One plugin, one rule file, three skills.
 - **No per-requirement directory scaffolding.** Just `.agent-context/`.
 - **The agent maintains the context, not you.** You just code.
 
