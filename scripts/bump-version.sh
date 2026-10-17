@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# scripts/bump-version.sh — keep VERSION and the three host manifests in lockstep.
+# scripts/bump-version.sh — keep VERSION, the three host manifests and the DSH bundle in lockstep.
 #
 #   ./scripts/bump-version.sh --check               # fail if anything drifted
 #   ./scripts/bump-version.sh 2.0.2                 # set VERSION and every manifest
 #   ./scripts/bump-version.sh --check --root DIR    # used by the test suite
 #
-# One version lives in four places: VERSION plus the Cursor, CodeBuddy and Codex
-# manifests. Hand-editing is how one of them ships stale, so VERSION is the source
-# of truth and this script is the only writer. MANIFESTS below is the registry: a
-# host manifest that is not listed here is invisible to both --check and a bump.
-# Only the first "version" field of each file is rewritten, so key order and
-# formatting survive.
+# One version lives in five places: VERSION, the Cursor, CodeBuddy and Codex
+# manifests, and the DSH bundle's package.json. Hand-editing is how one of them
+# ships stale, so VERSION is the source of truth and this script is the only
+# writer. MANIFESTS below is the registry: a manifest that is not listed here is
+# invisible to both --check and a bump. Only the first "version" field of each
+# file is rewritten, so key order and formatting survive.
 
 set -euo pipefail
 
@@ -64,6 +64,7 @@ MANIFESTS = (
     "plugin/.cursor-plugin/plugin.json",
     "plugin/.codebuddy-plugin/plugin.json",
     "plugin/.codex-plugin/plugin.json",
+    "dsh/package.json",
 )
 SEMVER = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
 VERSION_FIELD = re.compile(r'("version"\s*:\s*")[^"]*(")')
@@ -138,5 +139,5 @@ if problems:
     for problem in problems:
         print(f"  - {problem}")
     sys.exit(1)
-print("\nRe-run ./scripts/install-local.sh so installed copies pick up the new version.")
+print("\nRe-run ./scripts/install-local.sh all and reinstall the DSH bundle so installed copies pick up the new version.")
 PY

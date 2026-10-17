@@ -696,6 +696,8 @@ class VersionLockstep(unittest.TestCase):
         self.root = pathlib.Path(self.tmp.name)
         shutil.copytree(REPO_ROOT / "plugin", self.root / "plugin",
                         ignore=shutil.ignore_patterns("__pycache__"))
+        shutil.copytree(REPO_ROOT / "dsh", self.root / "dsh",
+                        ignore=shutil.ignore_patterns("node_modules", "__pycache__"))
         shutil.copy(REPO_ROOT / "VERSION", self.root / "VERSION")
 
     def bump(self, *args):
@@ -717,6 +719,15 @@ class VersionLockstep(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0, result.stdout)
         self.assertIn("9.9.9", result.stdout)
 
+    def test_dsh_manifest_drift_fails_the_check(self):
+        manifest = self.root / "dsh" / "package.json"
+        data = json.loads(manifest.read_text())
+        data["version"] = "9.9.9"
+        manifest.write_text(json.dumps(data))
+        result = self.bump("--check")
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("9.9.9", result.stdout)
+
     def test_bump_rewrites_version_and_every_manifest(self):
         result = self.bump("3.1.4")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -724,6 +735,8 @@ class VersionLockstep(unittest.TestCase):
         for host in HOSTS:
             data = json.loads((self.root / "plugin" / f".{host}-plugin" / "plugin.json").read_text())
             self.assertEqual(data["version"], "3.1.4", host)
+        dsh_manifest = json.loads((self.root / "dsh" / "package.json").read_text())
+        self.assertEqual(dsh_manifest["version"], "3.1.4", "dsh")
         self.assertEqual(self.bump("--check").returncode, 0)
 
 
