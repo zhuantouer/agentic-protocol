@@ -6,7 +6,7 @@
 **当前子目标**：领域知识的主动沉淀与按需复用；范围、验收与下一决策见 Other Goals。主目标及既有行为验收不变。
 
 ## Other Goals
-- 领域知识闭环（所属 Objective）：按任务找到并复用知识来源、方法/pipeline、动作前后检查及领域复核条件。Assumption for acceptance：隔离跨会话任务能在无用户提醒时提炼并复用适用知识，能处理领域/版本错配与冲突，不复制正文、不越权或生成空文件。**候选设计已评审，未实施/未行为验收**；下一决策：是否采用 `knowledge/<domain>.md` 按领域聚合、`CONVENTIONS.md` 只留跨领域约定与路由（用户提议，专家 C 建议采用，[布局提议](worklog/2026-10-16.md#knowledge-directory-layout-proposal)）。[用户方向与裁决](worklog/2026-10-16.md#domain-knowledge-discovery-and-reuse)
+- 领域知识闭环（所属 Objective）：按任务找到并复用知识来源、方法/pipeline、动作前后检查及领域复核条件。Assumption for acceptance：隔离跨会话任务能在无用户提醒时提炼并复用适用知识，能处理领域/版本错配与冲突，不复制正文、不越权或生成空文件。**2026-10-17 已写入方法论源码（`knowledge/<domain>.md`、读取时机、主动沉淀、质量与归属），文本层验证通过，未行为验收**；待用户确认：直接列目录选读（未采用 CONVENTIONS 每领域一行路由）、跨项目共享位置。[实施与复核](worklog/2026-10-17.md#domain-knowledge-capture-implemented)，[用户方向](worklog/2026-10-16.md#domain-knowledge-discovery-and-reuse)
 - 外部写/纠正漏记触发（所属 Objective，等待隔离回放）：Assumption for acceptance：四类外部写结果均本回合留存；简单回合的 durable 纠正与实测矛盾可留存；日志/地图独立、知识单一归属且不越权同步；无新事实的简单只读不写。文本层完成，实际行为待隔离回放；下一检查保留于 Next Check，既有 goal/evidence 与 review-gate 验证仍开放。
 
 ## Closed Questions
@@ -16,6 +16,7 @@
 One current-state map; daily logs own detail. No separate handoff, automatic daily files or calendar-based resume. Preserve capability and decisive context. Commit validated milestones by default (scoped), push only on request; do not refresh installed plugins; leave unrelated plugin caches untouched. Preferences: CONVENTIONS.md.
 
 ## Current State
+2026-10-17 领域知识主动沉淀写入源码：常驻规则新增留存触发（新确认的可复用领域知识）、实质任务/切换领域/关键动作前读 `knowledge/`、归属表一行与收尾第 4 项；细则在 `bootstrap-context` Domain knowledge。53/53 tests、validator passed（整文件 4953/6000）；独立复核无阻塞，F1–F5/F7–F9 修复并复验关闭，F6 路由取舍待用户。**行为未回放，宿主副本未更新。** [实施与复核](worklog/2026-10-17.md#domain-knowledge-capture-implemented)
 2026-10-16 A 修补生命周期风险与知识层级：规则计入当前操作及已知后续后果；`run-review` 限定有效后续核对、G1 覆盖使后果可以发生的动作前；CONVENTIONS 区分通用方法论与领域流程。文本契约及结构通过（51/51 tests、validator）；独立复核确认三项意见文本层关闭，回放输入的风险条件已补全。**行为未回放，宿主副本未更新**。[验收与证据](worklog/2026-10-16.md#a-lifecycle-review-fixes)
 2026-10-15 合入外部规则借鉴的两条常驻条款：`Execution` 区分终态交付物（代码、注释、文档、commit 描述及 `PROGRESS.md` 当前口径只写干净终态，不留对话纠错痕迹）与过程/证伪记录（归 `worklog/` 或 `MEMORY.md`）；`Response Style` 规定需要画图时用 Mermaid、不用 ASCII art。49/49 tests OK，validator passed（正文 4501 chars，整文件 4570 / 6000）。源码规则 SHA-256 前缀 `c17a2bee854c7f0a`；**未重装本机宿主副本**（三宿主已安装副本仍为 `315a3234b0a1deb3`）。 [终态与制图条款](worklog/2026-10-15.md#clean-final-state-and-mermaid-clauses)
 2026-10-15 CodeBuddy 5.0 不加载本插件的原因已经对上官方结论，布局已改并装到本机，commit `3c8aae5` 已推送（`5f6262e..3c8aae5`）。插件源在 `~/.codebuddy/plugins/marketplaces/agentic-protocol-marketplace/plugins/agentic-protocol`，manifest source 为 `./plugins/agentic-protocol`（不再逃出市场目录）。规则 SHA-256 前缀 `315a3234b0a1deb3`。CLI 不在 PATH，`installed_plugins.json` 仍没有该条目；IDE 未 reload。`.mdc` 规则要等官方说的新版本，当前 `1.122.1` 是否已包含该修复未知。 [布局](worklog/2026-10-15.md#codebuddy-5-plugin-source-inside-marketplace)
@@ -31,6 +32,7 @@ One current-state map; daily logs own detail. No separate handoff, automatic dai
 2026-09-19 (still current): one hook — Codex SessionStart delivering the protocol — and two skills; no host injects work-record content, the agent reads `PROGRESS.md` itself. Chinese rule canonical at ~3.3k chars against the 6000-char host limit; no English fallback. [Slimming](worklog/2026-09-19.md#plugin-slimmed-to-one-hook-and-two-skills)
 
 ## Next Check
+领域知识 → 用 [Domain knowledge replay](../plugin/README.md#domain-knowledge-replay) 在隔离虚构领域 fixture 中跑两次会话，检查不提醒时是否沉淀、重置后是否复用、错配是否不套用、无新知识是否不写；未执行不视为通过。若过度触发，再把“关键动作”对齐 Execution 风险判据。
 生命周期复核 → 用 [新增边界输入及既有低风险对照](../plugin/README.md#inference-and-review-replay) 在隔离宿主/mock 环境检查实际复核时机、覆盖与冗余；不使用线上资源、不自动刷新用户安装。未执行，不视为行为通过。
 漏记触发 → 按 [six isolated mock cases](../plugin/README.md#external-write-and-correction-replay) 比较实际日志/地图/知识源/安装副本 diff，并检查未授权 skill 差异的待办在上下文重置后可恢复；只在隔离、工具开启环境验收，不用线上资源，不自动刷新用户安装。达标仅支持这些用例；若仍漏记或额外写入，按具体失败再决定是否需要机械 stop 提醒。既有 gate/goal/evidence 验证保留如下，不是本轮已执行项或安装授权。
 A's findings are now [fixed](worklog/2026-09-23.md#c-fixes-for-the-a-review-findings), so the next step is the user's own trial — but **reinstall first** (`./scripts/install-local.sh all`), otherwise a session still runs the pre-patch rule and the trial measures the wrong version. During the trial the three things text cannot enforce are: whether a reviewer is actually spawned rather than a briefing self-answered, whether severe findings are closed only after re-verification, and whether gates stay quiet on trivial work. Retain all three gates as requested. The three new replay cases are the fixed-input fallback if use alone is inconclusive.

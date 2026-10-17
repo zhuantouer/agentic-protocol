@@ -12,7 +12,7 @@
 - At each validated milestone the agent commits by default, scoped to that milestone's changes, so work stays traceable; push only on explicit user request (user decision 2026-10-12, supersedes recommend-only).
 - Evaluate the whole design, not isolated clause patches. Findings carry recommendations; when reviewers disagree, distinguish accepted points, rejected points with reasons and decisions requiring the user.
 - 常驻规则与通用方法论 skill 保存跨场景原则，不按单个案例累加特例；领域知识或 skill 可保存有适用范围与证据支持的具体流程、命令及 checklist；一次事故的经过归 worklog。通用性按是否覆盖同类问题判断，不以是否出现具体名词判断（2026-10-16 用户纠正及 A review）。
-- 用户希望 agent 主动沉淀并按需复用所接触领域的可靠知识来源、工作方法与 pipeline、常用动作、动作前后 checklist 和复核条件，不把领域学习仅当作失败后的 MEMORY/worklog；不限定为程序或命令。生命周期风险应计入已知下游用途，但不扩成普遍复核（2026-10-16 用户方向）。候选文件路由、工具和跨项目共享方案尚未确认。[原话与设计边界](worklog/2026-10-16.md#domain-knowledge-discovery-and-reuse)
+- 用户希望 agent 主动沉淀并按需复用所接触领域的可靠知识来源、工作方法与 pipeline、常用动作、动作前后 checklist 和复核条件，不把领域学习仅当作失败后的 MEMORY/worklog；不限定为程序或命令。生命周期风险应计入已知下游用途，但不扩成普遍复核（2026-10-16 用户方向）。2026-10-17 用户进一步要求方法论像资深从业者一样积累资料、数据、环境、工具、故障与实验经验并据此改进方法，已以 `knowledge/<domain>.md` 实施；路由方式与跨项目共享尚待用户确认。[原话与设计边界](worklog/2026-10-16.md#domain-knowledge-discovery-and-reuse)，[实施](worklog/2026-10-17.md#domain-knowledge-capture-implemented)
 
 ## Project Boundaries
 - `PROGRESS.md` is the sole current-state map: goal, now, coarse milestones and a few relevant links. Detailed work belongs in `worklog/YYYY-MM-DD.md`. Resume by task, not yesterday's date; no empty daily files or copied handoffs.

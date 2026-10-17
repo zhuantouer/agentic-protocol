@@ -87,7 +87,7 @@ description: 维护简短的 PROGRESS.md 地图与按需的 work log，用于状
 1. 完整读 `PROGRESS.md`；信息不足时跟随当前任务链接。
 2. 没有链接时按任务搜索日志并只读匹配章节；不按日期批量加载、不建空日志、不复制旧笔记。
 3. 保持地图可完整重读：细节进日志，合并旧 milestone，移除过时链接但保留结论、决定性限制和相关证据。不建日志索引或第二层归档。
-4. 可复用的命令、偏好和教训分别归 `COMMANDS.md`、`CONVENTIONS.md`、`MEMORY.md`，只链接不复制；不列 touched files。
+4. 可复用的命令、偏好、领域知识和跨领域教训分别归 `COMMANDS.md`、`CONVENTIONS.md`、`knowledge/<domain>.md`、`MEMORY.md`，只链接不复制；不列 touched files。
 
 ## Legacy migration
 

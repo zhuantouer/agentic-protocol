@@ -16,6 +16,7 @@ One protocol, two skills, and lightweight Python-standard-library hooks. No inde
 | Agent misses local project habits | `.agent-context/CONVENTIONS.md` stores style, workflow, boundaries, and user preferences |
 | Agent hallucinates or free-wheels | Built-in confirmation guardrails |
 | Hard-won lessons disappear after the chat | `.agent-context/MEMORY.md` captures project decisions, user corrections, failures, and mistakes to avoid |
+| Every task in a domain starts from zero | `.agent-context/knowledge/<domain>.md` accumulates sources, data, environment, tools, fixes and experiment findings without being asked, and is read before the next task in that domain |
 
 ## How it works
 
@@ -30,7 +31,9 @@ The agent keeps a short state map, dated evidence logs and only useful supportin
 ├── COMMANDS.md       ← reusable commands and validation profile
 ├── CONFIG.md         ← env names and secret locations, never values
 ├── CONVENTIONS.md    ← durable preferences and boundaries
-└── MEMORY.md         ← reusable lessons and decision rationale
+├── knowledge/
+│   └── <domain>.md   ← reusable domain knowledge, created when a domain is actually worked in
+└── MEMORY.md         ← cross-domain lessons and decision rationale
 ```
 
 `PROGRESS.md` answers “where are we now?”; daily logs explain “what happened and why?”. At the start of a session the agent reads `Objective`, optional `Constraints`, `Current State` and optional `Next Check` from `PROGRESS.md` itself, including a few task-relevant links. `Milestones` summarizes coarse outcomes, not every day or task. Neither logs nor milestones are automatically loaded; there is no full log index in PROGRESS. The [update-progress templates](plugin/skills/update-progress/SKILL.md) define both formats.
@@ -62,6 +65,7 @@ You should notice practical changes in agent behavior:
 - Validation results explain what was checked and what remains unknown.
 - Work history explains why a conclusion changed; next checks explain what decision they will inform.
 - Lessons from mistakes show up in `.agent-context/MEMORY.md` instead of disappearing with the chat.
+- Domain experience — where the data is, how to run and debug jobs, what worked in past experiments — lands in `.agent-context/knowledge/<domain>.md` unprompted, and the next task in that domain starts from it.
 - Diffs stay focused because the core rule tells agents to keep edits tied to the user's request.
 
 ## Installation
@@ -88,7 +92,7 @@ Skills follow the [Agent Skills](https://cursor.com/cn/docs/skills) format (`ski
 
 | Skill | Auto trigger | Manual |
 |-------|--------------|--------|
-| `bootstrap-context` | Missing context before substantive work; knowledge updates (structure, commands, config, conventions, decisions) | `/bootstrap-context` |
+| `bootstrap-context` | Missing context before substantive work; knowledge updates (structure, commands, config, conventions, decisions); reusable domain knowledge in `knowledge/<domain>.md`, captured without being asked | `/bootstrap-context` |
 | `update-progress` | Goal/plan changes, stage outcomes; status queries without rewriting unchanged state | `/update-progress` |
 
 ## Rules

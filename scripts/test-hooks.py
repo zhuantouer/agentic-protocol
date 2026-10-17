@@ -231,6 +231,53 @@ class Contracts(ProjectCase):
         self.assertIn("就地更正其知识归属文件", memory)
         self.assertIn("不重复存放", memory)
 
+    def test_domain_knowledge_is_discovered_before_work_and_captured_unprompted(self):
+        # Agents default to solving only the current request; reusable domain
+        # knowledge must have an owner, a read moment and a capture trigger.
+        body = RULE.read_text(encoding="utf-8")
+        startup = body.split("## Startup\n", 1)[1].split("\n## ", 1)[0]
+        memory = body.split("## Project Memory\n", 1)[1]
+        self.assertIn("可复用的领域知识", startup)
+        # Only newly confirmed knowledge triggers a write; a recalled fact does not.
+        self.assertIn("新确认", startup)
+        self.assertIn("切换领域", startup)
+        # A checklist read only at task start is forgotten by the time of the action.
+        self.assertIn("关键动作前", startup)
+        self.assertIn("`knowledge/`", startup)
+        self.assertIn("避开已知失败", startup)
+        self.assertIn("| `knowledge/<domain>.md` |", memory)
+        closeout = memory.split("**回合收尾**", 1)[1]
+        for guard in ("用户未要求也", "成功做法", "来源、适用范围与证据强度", "不写成通用规律"):
+            with self.subTest(guard=guard):
+                self.assertIn(guard, closeout)
+        # The always-on rule names kinds of knowledge, never one domain's case.
+        for case_specific in ("pcvr", "广告", "论文", "消融", "wide", "obsidian"):
+            self.assertNotIn(case_specific, body.lower(), case_specific)
+
+    def test_bootstrap_owns_domain_knowledge_quality(self):
+        skill = (PLUGIN / "skills" / "bootstrap-context" / "SKILL.md").read_text(encoding="utf-8")
+        section = skill.split("## Domain knowledge\n", 1)[1].split("\n## ", 1)[0]
+        for guard in (
+            "按需创建",
+            "适用范围",
+            "来源性质",
+            "按主题",
+            "就地更正",
+            "初步",
+            "只记指针",
+            "不记 secret",
+            "不构成行动授权",
+            "以当前源码与实测为准",
+            "先比对已有文件",
+            "关键动作前",
+            "不抄录敏感数据样本",
+            "换到同领域另一个项目仍成立",
+        ):
+            with self.subTest(guard=guard):
+                self.assertIn(guard, section)
+        recovery = PROGRESS_SKILL.read_text(encoding="utf-8").split("## Recovery and growth\n", 1)[1]
+        self.assertIn("`knowledge/<domain>.md`", recovery)
+
     def test_skill_repairs_do_not_authorize_installed_copy_changes(self):
         memory = RULE.read_text(encoding="utf-8").split("## Project Memory\n", 1)[1]
         for guard in ("源头与同步目标", "CONVENTIONS.md", "限已授权范围", "不自动改安装副本", "差异证据", "未完成的留存或修复进待办", "归属和恢复条件"):
@@ -396,7 +443,7 @@ class Contracts(ProjectCase):
         for clause in (
             "干净的终态设计",
             "不残留对话中被撤回的错误",
-            "有复发风险的被证伪假设仅归入 `worklog/` 或 `MEMORY.md`",
+            "有复发风险的被证伪假设仅归入 `worklog/`、`MEMORY.md` 或对应 `knowledge/` 文件",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, execution)
