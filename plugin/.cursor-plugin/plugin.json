@@ -1,7 +1,7 @@
 {
   "name": "agentic-protocol",
   "displayName": "Agentic Protocol",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Goal-directed project memory: a short goal/state map and dated work logs loaded on demand. No index, database or MCP server.",
   "author": {
     "name": "thanezh"
