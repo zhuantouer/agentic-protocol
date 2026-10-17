@@ -319,7 +319,7 @@ class Contracts(ProjectCase):
         # A blanket "do not execute commands" ban contradicts running recorded pre-checks
         # and COMMANDS.md; the boundary is self-granted authority, not command execution.
         body = RULE.read_text(encoding="utf-8")
-        trust = body.split("**信任边界**", 1)[1].split("\n\n", 1)[0]
+        trust = body.split("**信任边界**", 1)[1].split("\n", 1)[0]
         skill = (PLUGIN / "skills" / "bootstrap-context" / "SKILL.md").read_text(encoding="utf-8")
         boundary = skill.split("## Domain knowledge\n", 1)[1].split("不构成行动授权", 1)[1].split("\n", 1)[0]
         for text in (trust, boundary):
