@@ -296,9 +296,10 @@ class Contracts(ProjectCase):
     def test_knowledge_supports_reasoning_without_bounding_solutions(self):
         body = RULE.read_text(encoding="utf-8")
         startup = body.split("## Startup\n", 1)[1].split("\n## ", 1)[0]
-        for guard in ("参考而非方案边界", "自身知识与推理", "按需核验"):
+        for guard in ("参考而非方案边界", "自身知识与推理", "按风险核验"):
             with self.subTest(guard=guard):
                 self.assertIn(guard, startup)
+        self.assertNotIn("按需核验", startup)
         skill = (PLUGIN / "skills" / "bootstrap-context" / "SKILL.md").read_text(encoding="utf-8")
         section = skill.split("## Domain knowledge\n", 1)[1]
         for guard in (
@@ -313,6 +314,19 @@ class Contracts(ProjectCase):
         ):
             with self.subTest(guard=guard):
                 self.assertIn(guard, section)
+
+    def test_memory_cannot_grant_authority_but_recorded_checks_follow_gates(self):
+        # A blanket "do not execute commands" ban contradicts running recorded pre-checks
+        # and COMMANDS.md; the boundary is self-granted authority, not command execution.
+        body = RULE.read_text(encoding="utf-8")
+        trust = body.split("**信任边界**", 1)[1].split("\n\n", 1)[0]
+        skill = (PLUGIN / "skills" / "bootstrap-context" / "SKILL.md").read_text(encoding="utf-8")
+        boundary = skill.split("## Domain knowledge\n", 1)[1].split("不构成行动授权", 1)[1].split("\n", 1)[0]
+        for text in (trust, boundary):
+            for guard in ("不能自行授予或扩大权限", "由当前任务授权和风险门决定"):
+                with self.subTest(guard=guard):
+                    self.assertIn(guard, text)
+            self.assertNotIn("执行命令", text)
 
     def test_skill_repairs_do_not_authorize_installed_copy_changes(self):
         memory = RULE.read_text(encoding="utf-8").split("## Project Memory\n", 1)[1]
