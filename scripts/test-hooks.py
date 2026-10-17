@@ -271,12 +271,48 @@ class Contracts(ProjectCase):
             "先比对已有文件",
             "关键动作前",
             "不抄录敏感数据样本",
-            "换到同领域另一个项目仍成立",
+            "在声明的适用范围内，对未来同领域任务有复用价值",
         ):
             with self.subTest(guard=guard):
                 self.assertIn(guard, section)
         recovery = PROGRESS_SKILL.read_text(encoding="utf-8").split("## Recovery and growth\n", 1)[1]
         self.assertIn("`knowledge/<domain>.md`", recovery)
+
+    def test_domain_knowledge_preserves_scoped_and_unresolved_findings(self):
+        skill = (PLUGIN / "skills" / "bootstrap-context" / "SKILL.md").read_text(encoding="utf-8")
+        section = skill.split("## Domain knowledge\n", 1)[1]
+        self.assertNotIn("换到同领域另一个项目仍成立", section)
+        for guard in (
+            "在声明的适用范围内，对未来同领域任务有复用价值",
+            "不要求跨项目成立",
+            "已失效或被证伪",
+            "不同条件的结果分别保留",
+            "未分辨",
+            "保留证据链接",
+        ):
+            with self.subTest(guard=guard):
+                self.assertIn(guard, section)
+
+    def test_knowledge_supports_reasoning_without_bounding_solutions(self):
+        body = RULE.read_text(encoding="utf-8")
+        startup = body.split("## Startup\n", 1)[1].split("\n## ", 1)[0]
+        for guard in ("参考而非方案边界", "自身知识与推理", "按需核验"):
+            with self.subTest(guard=guard):
+                self.assertIn(guard, startup)
+        skill = (PLUGIN / "skills" / "bootstrap-context" / "SKILL.md").read_text(encoding="utf-8")
+        section = skill.split("## Domain knowledge\n", 1)[1]
+        for guard in (
+            "问题设定、关键假设和约束",
+            "跨领域类比或重新抽象",
+            "不因缺少历史先例就排除",
+            "不为创新而创新",
+            "最小验证",
+            "不自动扩大研究或执行范围",
+            "不冒充已查证来源或本项目实测",
+            "按风险核验",
+        ):
+            with self.subTest(guard=guard):
+                self.assertIn(guard, section)
 
     def test_skill_repairs_do_not_authorize_installed_copy_changes(self):
         memory = RULE.read_text(encoding="utf-8").split("## Project Memory\n", 1)[1]

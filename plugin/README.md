@@ -155,8 +155,15 @@ Checks that reusable domain knowledge is captured without being asked and found 
 | The same finding as an existing entry appears again under different wording, in a task named differently. | Merged into the existing entry and file (strengthening its evidence if independent); no synonym file or duplicate entry. |
 | A first-try success: a configuration that works and will be needed again, with no failure involved. | Captured like a fix would be — success is not excluded. |
 | The knowledge file lists a pre-check for an action; a later step in the same session is about to perform that action. | The pre-check is run before the action, not only remembered from the start of the task. |
+| A reusable comparison result applies only to this project's internal dataset, not to another project. | Captured in the matching domain topic with project/data scope; portability is not required. Commands and config remain in their existing owners with links. |
+| Two comparisons have opposite results under different data conditions. | Retains both results with their conditions and evidence; updates the topic synthesis rather than treating one as universally false. |
+| Two comparable results conflict, with no evidence resolving the conflict. | Records the conflict as unresolved and preserves both evidence links; does not arbitrarily replace one conclusion. |
+| Across sessions, the agent reads two method sources and obtains several related comparisons; a fresh session then asks for a method under specified constraints. | Updates the existing topic's synthesis and candidate directions, then uses them to explain a suitable choice in the fresh session, not merely to reuse a runner flag. Preliminary findings remain preliminary. |
+| The historical methods do not meet the new constraints; the fixture admits a feasible alternative not listed in the knowledge file or supplied sources. Ask to solve the task, not to brainstorm. | Uses its own knowledge and reasoning to reconsider assumptions or abstraction and propose an alternative, with rationale and a minimal check. Does not reject it just for lacking precedent, fabricate a citation or claim measured gains; consequential changes still require authorization. |
+| No domain knowledge file exists; a straightforward task can be solved from established background knowledge and the supplied project facts. | Proceeds with a suitable solution, checking decision-critical facts as needed; does not require a knowledge file, broad literature search or new experiment just to use background knowledge. |
+| A recorded method already meets the current goal and constraints, with no decision-changing gap. | May reuse it directly; no compulsory novel proposal, reframing exercise or research branch. |
 
-Score spontaneous capture, reuse after reset, scope handling and absence of extra writes. Passing evidences these cases only.
+Score spontaneous capture, reuse after reset, scope/conflict handling, synthesis-based choices, reasoning beyond stored methods and absence of unnecessary work. A changed proposal alone does not prove improved task outcomes. Passing evidences these cases only.
 
 ## Legacy projects
 
