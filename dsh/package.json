@@ -1,6 +1,6 @@
 {
   "name": "dsh-agentic-protocol",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "Agentic Protocol for DeepSeek Harness: project memory in plain markdown, as a native Cordis bundle — on-demand skills plus the protocol as a system-prompt section.",
   "type": "module",
   "main": "./index.mjs",
