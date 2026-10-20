@@ -10,12 +10,14 @@
 - 外部写/纠正漏记触发（所属 Objective，等待隔离回放）：Assumption for acceptance：四类外部写结果均本回合留存；简单回合的 durable 纠正与实测矛盾可留存；日志/地图独立、知识单一归属且不越权同步；无新事实的简单只读不写。文本层完成，实际行为待隔离回放；下一检查保留于 Next Check，既有 goal/evidence 与 review-gate 验证仍开放。
 
 ## Closed Questions
+- 2026-10-18 — DSH 改为 npm 包名安装（所属 Objective）：**用户明确放弃**。安装仍用 GitHub 子目录 `github:zhuantouer/agentic-protocol#path:/dsh`。包名保持 `dsh-agentic-protocol`，本地改名已还原。`npm publish` 未执行，registry 上 `agentic-protocol` 未被占用。[尝试与放弃](worklog/2026-10-18.md#publish-agentic-protocol-npm)
 - 2026-10-16 — topo 上传与无人值守启动案例（所属 Objective）：**改进建议已回答；生命周期条款源码已修补，领域门禁未实施，行为未验收**（当前修补见 Current State）。Assumption for acceptance：区分已有规则未执行、文本缺口和证据未知，给最小可执行建议且不扩大轻量场景流程。案例仅来自用户复盘；源码核对与独立评审支持优先澄清生命周期风险、领域动作门禁及证据/消费版本绑定，不支持模型能力因果结论。既有开放目标不关闭。[证据与裁决](worklog/2026-10-16.md#upload-and-unattended-start-case-review)
 
 ## Constraints
 One current-state map; daily logs own detail. No separate handoff, automatic daily files or calendar-based resume. Preserve capability and decisive context. Commit validated milestones by default (scoped), push only on request; do not refresh installed plugins; leave unrelated plugin caches untouched. Preferences: CONVENTIONS.md.
 
 ## Current State
+2026-10-18 用户放弃 npm 发布，DSH 继续从 GitHub 子目录安装：Plugins → Add plugin 填 `github:zhuantouer/agentic-protocol#path:/dsh`。为 npm 短名做的本地改名已还原，包名仍是 `dsh-agentic-protocol`。`npm publish` 未执行。 [细节](worklog/2026-10-18.md#publish-agentic-protocol-npm)
 2026-10-17 规则正文去掉段内空行，保留 `##`、标题和表格周围的空行：105 行 → 81 行（删 24 行段内空行，留 18 行结构空行），非空行未改。整文件 5016 → 4992，正文 4947 → 4923，仍超 4200 审查线，低于 6000。`dsh/rules/` 已按投影重写。`test-hooks.py` 57/57，`test-dsh-bundle.mjs` 11/11，validator passed。已推送 `73de373..a0507bc`，无 force。宿主与已装 DSH 快照未刷新。 [细节](worklog/2026-10-17.md#drop-rule-paragraph-blank-lines)
 2026-10-17 修复 DSH 包版本漂移：`dsh/package.json` 2.0.1 → 2.1.0，`bump-version.sh` 的 MANIFESTS 登记 dsh，`test-hooks.py` 覆盖 dsh 漂移与重写；`bump-version.sh --check` 报 2.1.0 in 4 manifests。已推送 `027502f..71f7130`。**已装的 git 快照仍是 2.0.1**，需从新 commit 重装后 Plugins 页才显示 2.1.0。 [细节](worklog/2026-10-17.md#dsh-version-sync)
 2026-10-17 已推送合并后的 main，两次均无 force：合并结果 `02ecbab..7ca8571`；记录提交 `7ca8571..551550b`。未跟踪的 `.codebuddy/` 仍不入库。 [推送](worklog/2026-10-17.md#push-merged-main)
