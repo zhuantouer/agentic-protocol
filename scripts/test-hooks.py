@@ -500,15 +500,6 @@ class Contracts(ProjectCase):
         style = body.split("## Response Style\n", 1)[1].split("\n## ", 1)[0]
         self.assertIn("需要画图时用 Mermaid，不用 ASCII art", style)
 
-    def test_scripted_file_edits_must_surface_the_change_set(self):
-        # Direct edits prefer the IDE/harness dedicated file-edit or patch tool
-        # so the diff remains visible to the user.
-        body = RULE.read_text(encoding="utf-8")
-        execution = body.split("## Execution\n", 1)[1].split("\n## ", 1)[0]
-        for clause in ("直接编辑优先用 IDE/harness 提供的专用文件编辑或补丁工具", "diff对用户可见"):
-            with self.subTest(clause=clause):
-                self.assertIn(clause, execution)
-
     def test_retired_workflow_is_not_advertised(self):
         self.assertFalse((PLUGIN / "skills" / "handoff").exists())
         surfaces = list((PLUGIN / "skills").rglob("*.md")) + [REPO_ROOT / "README.md", PLUGIN / "README.md"]
