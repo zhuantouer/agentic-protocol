@@ -16,7 +16,7 @@ description: 初始化和维护 `.agent-context/` 里的知识类文件（结构
 ## Instructions
 
 1. 只读任务相关的 `README`、manifest、env 示例、规则与宿主指令，不扫全仓；有 git 用 diff/status 定位变化，无 git 比较相关文件并标不确定性。
-2. 改前先读，局部更新并保留有效人工内容；只对实际检查过的路径声称已验证。结构变化时同步 `ARCHITECTURE.md` 的 `verified against`（commit + 已核对 worktree，或 `(no git)`）与覆盖路径。
+2. 改前先读，用默认 `Edit`/`Write` 工具局部更新并保留有效人工内容（追加先读末尾再 `Edit`，严禁用 bash 重定向或内联脚本直接改文件）；只对实际检查过的路径声称已验证。结构变化时同步 `ARCHITECTURE.md` 的 `verified against`（commit + 已核对 worktree，或 `(no git)`）与覆盖路径。
 3. 自行从源码与实测提炼下次会话仍有用的事实，不向用户索要可自查信息；所有文件可选，不留空占位。
 4. 写教训时区分已核实失误、可能原因与候选改进并标适用范围；单次案例、复盘或他人意见不直接升级为跨任务规则。旧教训被证伪时就地更正，不并存相反两条。
 5. 用户意图与 `PROGRESS.md` 对应目标不一致时，交 `update-progress` 处理（仅切换焦点不算目标漂移）；本 skill 不改状态文件。

@@ -500,6 +500,35 @@ class Contracts(ProjectCase):
         style = body.split("## Response Style\n", 1)[1].split("\n## ", 1)[0]
         self.assertIn("需要画图时用 Mermaid，不用 ASCII art", style)
 
+    def test_file_writes_require_edit_or_write_tools_and_forbid_bash_writes(self):
+        # Live incident (2026-10-20): an agent loaded update-progress yet used
+        # `cat >> ... <<'EOF'` for worklog appends and `python3 - <<'EOF'` for
+        # PROGRESS.md updates, hiding diffs from the IDE and rationalizing away
+        # a soft "prefer" rule. Both the always-on rule and the skills must
+        # mandate Edit/Write (read-tail + Edit for appends) and forbid bash
+        # redirection/inline-script file mutations.
+        body = RULE.read_text(encoding="utf-8")
+        execution = body.split("## Execution\n", 1)[1].split("\n## ", 1)[0]
+        for clause in (
+            "**文件写入**",
+            "含 `.agent-context/`",
+            "`Edit`/`Write`",
+            "追加先读末尾再 `Edit`",
+            "IDE diff",
+            "严禁用 `cat >>`、`tee -a`、`printf >>`、`sed -i`、`python` 等 bash 命令直接改文件",
+            "项目既定脚本除外",
+        ):
+            with self.subTest(surface="rule", clause=clause):
+                self.assertIn(clause, execution)
+        progress_skill = PROGRESS_SKILL.read_text(encoding="utf-8")
+        for clause in ("新建用 `Write`，追加先读末尾再用 `Edit` 锚定", "严禁用 `cat >>`、`tee -a`、`printf >>`、`sed -i`、`python` 等 bash 命令直接更新文件"):
+            with self.subTest(surface="update-progress", clause=clause):
+                self.assertIn(clause, progress_skill)
+        bootstrap_skill = (PLUGIN / "skills" / "bootstrap-context" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("用默认 `Edit`/`Write` 工具局部更新", bootstrap_skill)
+        self.assertIn("追加先读末尾再 `Edit`", bootstrap_skill)
+        self.assertIn("严禁用 bash 重定向或内联脚本直接改文件", bootstrap_skill)
+
     def test_retired_workflow_is_not_advertised(self):
         self.assertFalse((PLUGIN / "skills" / "handoff").exists())
         surfaces = list((PLUGIN / "skills").rglob("*.md")) + [REPO_ROOT / "README.md", PLUGIN / "README.md"]
