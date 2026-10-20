@@ -500,6 +500,16 @@ class Contracts(ProjectCase):
         style = body.split("## Response Style\n", 1)[1].split("\n## ", 1)[0]
         self.assertIn("需要画图时用 Mermaid，不用 ASCII art", style)
 
+    def test_scripted_file_edits_must_surface_the_change_set(self):
+        # A host's diff view only covers its own edit tools; a scripted write
+        # leaves no reviewable diff, so the protocol prefers the edit tool and
+        # requires reporting the change set when a script is unavoidable.
+        body = RULE.read_text(encoding="utf-8")
+        execution = body.split("## Execution\n", 1)[1].split("\n## ", 1)[0]
+        for clause in ("优先用宿主编辑工具", "先说明范围与原因", "变更集"):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, execution)
+
     def test_retired_workflow_is_not_advertised(self):
         self.assertFalse((PLUGIN / "skills" / "handoff").exists())
         surfaces = list((PLUGIN / "skills").rglob("*.md")) + [REPO_ROOT / "README.md", PLUGIN / "README.md"]
