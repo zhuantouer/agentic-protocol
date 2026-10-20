@@ -66,7 +66,7 @@ description: 维护简短的 PROGRESS.md 地图与按需的 work log，用于状
 
 ## Daily log template
 
-仅在满足写入判据时用用户本地工作日期（非下次会话）建/追加日志；连续工作留在原文件直到产生新结果。新建用 `Write`，追加先读末尾再用 `Edit` 锚定（更新 `PROGRESS.md` 亦用 `Edit`），不覆盖他项；严禁用 `cat >>`、`tee -a`、`printf >>`、`sed -i`、`python` 等 bash 命令直接更新文件。
+仅在满足写入判据时用用户本地工作日期（非下次会话）建/追加日志；连续工作留在原文件直到产生新结果。新建用 `Write`，追加先读末尾再用 `Edit`/`StrReplace` 或其他专用文件更新工具锚定（更新 `PROGRESS.md` 同理），不覆盖他项；严禁用 `cat >>`、`tee -a`、`printf >>`、`sed -i`、`python` 等 bash/shell 命令直接更新文件。
 
 ```markdown
 # Work Log — YYYY-MM-DD

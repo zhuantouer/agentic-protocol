@@ -504,30 +504,35 @@ class Contracts(ProjectCase):
         # Live incident (2026-10-20): an agent loaded update-progress yet used
         # `cat >> ... <<'EOF'` for worklog appends and `python3 - <<'EOF'` for
         # PROGRESS.md updates, hiding diffs from the IDE and rationalizing away
-        # a soft "prefer" rule. Both the always-on rule and the skills must
-        # mandate Edit/Write (read-tail + Edit for appends) and forbid bash
+        # a soft "prefer" rule. Hosts also name their file tools differently
+        # (Cursor: Write/StrReplace + Shell; Claude/CodeBuddy/DSH: Write/Edit +
+        # Bash; Codex: apply_patch), so both the rule and skills must name
+        # Write/Edit/StrReplace + "或其他专用文件更新工具" and forbid bash/shell
         # redirection/inline-script file mutations.
         body = RULE.read_text(encoding="utf-8")
         execution = body.split("## Execution\n", 1)[1].split("\n## ", 1)[0]
         for clause in (
             "**文件写入**",
             "含 `.agent-context/`",
-            "`Edit`/`Write`",
-            "追加先读末尾再 `Edit`",
+            "`Write`/`Edit`/`StrReplace` 或其他专用文件更新工具",
+            "追加先读末尾再锚定",
             "IDE diff",
-            "严禁用 `cat >>`、`tee -a`、`printf >>`、`sed -i`、`python` 等 bash 命令直接改文件",
+            "严禁用 `cat >>`、`tee -a`、`printf >>`、`sed -i`、`python` 等 bash/shell 命令直接改文件",
             "项目既定脚本除外",
         ):
             with self.subTest(surface="rule", clause=clause):
                 self.assertIn(clause, execution)
         progress_skill = PROGRESS_SKILL.read_text(encoding="utf-8")
-        for clause in ("新建用 `Write`，追加先读末尾再用 `Edit` 锚定", "严禁用 `cat >>`、`tee -a`、`printf >>`、`sed -i`、`python` 等 bash 命令直接更新文件"):
+        for clause in (
+            "新建用 `Write`，追加先读末尾再用 `Edit`/`StrReplace` 或其他专用文件更新工具锚定",
+            "严禁用 `cat >>`、`tee -a`、`printf >>`、`sed -i`、`python` 等 bash/shell 命令直接更新文件",
+        ):
             with self.subTest(surface="update-progress", clause=clause):
                 self.assertIn(clause, progress_skill)
         bootstrap_skill = (PLUGIN / "skills" / "bootstrap-context" / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("用默认 `Edit`/`Write` 工具局部更新", bootstrap_skill)
-        self.assertIn("追加先读末尾再 `Edit`", bootstrap_skill)
-        self.assertIn("严禁用 bash 重定向或内联脚本直接改文件", bootstrap_skill)
+        self.assertIn("用 `Write`/`Edit`/`StrReplace` 或其他专用文件更新工具局部更新", bootstrap_skill)
+        self.assertIn("追加先读末尾再锚定", bootstrap_skill)
+        self.assertIn("严禁用 bash/shell 重定向或内联脚本直接改文件", bootstrap_skill)
 
     def test_retired_workflow_is_not_advertised(self):
         self.assertFalse((PLUGIN / "skills" / "handoff").exists())
