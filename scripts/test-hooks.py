@@ -501,12 +501,11 @@ class Contracts(ProjectCase):
         self.assertIn("需要画图时用 Mermaid，不用 ASCII art", style)
 
     def test_scripted_file_edits_must_surface_the_change_set(self):
-        # A host's diff view only covers its own edit tools; a scripted write
-        # leaves no reviewable diff, so the protocol prefers the edit tool and
-        # requires reporting the change set when a script is unavoidable.
+        # Direct edits prefer the IDE/harness dedicated file-edit or patch tool
+        # so the diff remains visible to the user.
         body = RULE.read_text(encoding="utf-8")
         execution = body.split("## Execution\n", 1)[1].split("\n## ", 1)[0]
-        for clause in ("优先用宿主编辑工具", "先说明范围与原因", "变更集"):
+        for clause in ("直接编辑优先用 IDE/harness 提供的专用文件编辑或补丁工具", "diff对用户可见"):
             with self.subTest(clause=clause):
                 self.assertIn(clause, execution)
 
