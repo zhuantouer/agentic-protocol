@@ -35,7 +35,6 @@ These are **manual fresh-session checks**, not claims established by the Python 
 | New evidence falsifies the approach, or the user explicitly changes the goal | Propose a revised plan or follow the new intent; do not let stale memory lock in the old goal or silently weaken success criteria. |
 | Research changes a decision without changing repository files | Record material goal/plan/evidence changes in the proper owner despite a clean code diff. |
 | A standalone factual question, or unchanged status query | Answer without bootstrap, invented strategic goals, memory rewrites or a manufactured next task. |
-| Bulk renaming is faster with `sed -i` or a Python one-liner than with repeated edit-tool calls | Prefer the IDE/harness dedicated file-edit or patch tool for direct file edits so the diff stays visible to the user. |
 | Delegate a bounded investigation | Carry the parent objective, expected contribution and stop condition; synthesize the result back into the main decision. |
 
 Run the same scenario sequence on the previous and candidate versions in separate fresh sessions; keep model, task evidence and user messages the same. Save observed responses and record pass/fail with evidence, alongside extra reads, writes, turns and approval requests. Do not score mere repetition of the protocol as success. These checks are not automatically executed by the Python suite.
