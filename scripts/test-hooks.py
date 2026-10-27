@@ -500,6 +500,51 @@ class Contracts(ProjectCase):
         style = body.split("## Response Style\n", 1)[1].split("\n## ", 1)[0]
         self.assertIn("需要画图时用 Mermaid，不用 ASCII art", style)
 
+    def test_depth_clauses_demand_domain_methods_and_external_checks(self):
+        # A task can be executed in an expert's vocabulary without using the
+        # expert's methods, and a model re-reading its own output is not a check.
+        # The guards are asserted too: the demand has to stay risk-proportioned,
+        # keep its deviation exit and its inability clause, or it degrades into
+        # "every verification needs an automated test" and contradicts the
+        # open-reasoning guidance that knowledge is a reference, not a boundary.
+        body = RULE.read_text(encoding="utf-8")
+        execution = body.split("## Execution\n", 1)[1].split("\n## ", 1)[0]
+        for clause in (
+            "**领域方法与原始材料**",
+            "需要专业深度时",
+            "该领域公认的方法与工具",
+            "偏离时说明依据",
+            "原始数据、日志、源码等未消化材料",
+            '"扮演专家"、仅换用行话或引用自己的摘要，都不等于采用了其方法或核对了原始材料',
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, execution)
+        for clause in (
+            "验证力度与风险相称",
+            "优先用外部检验（测试、复算、回放）",
+            "尽量可自动判定",
+            "不以自述代替",
+            "无法执行如实说明",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, execution)
+        # Ordering and adjacency are the contract: choose the method before the
+        # check, and keep the external-check demand attached to the method clause.
+        lines = [line for line in execution.splitlines() if line.strip()]
+        method_index = next(
+            (index for index, line in enumerate(lines) if line.startswith("**领域方法与原始材料**")),
+            None,
+        )
+        # A missing or last-placed clause must fail as a failure, not an
+        # IndexError/StopIteration: the negative check has to read cleanly.
+        next_line = ""
+        if method_index is not None and method_index + 1 < len(lines):
+            next_line = lines[method_index + 1]
+        self.assertTrue(
+            next_line.startswith("**验证**"),
+            "**验证** must directly follow **领域方法与原始材料**",
+        )
+
     def test_file_writes_require_edit_or_write_tools_and_forbid_bash_writes(self):
         # Live incident (2026-10-20): an agent loaded update-progress yet used
         # `cat >> ... <<'EOF'` for worklog appends and `python3 - <<'EOF'` for
