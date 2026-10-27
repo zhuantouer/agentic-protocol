@@ -498,7 +498,11 @@ class Contracts(ProjectCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, execution)
         style = body.split("## Response Style\n", 1)[1].split("\n## ", 1)[0]
-        self.assertIn("需要画图时用 Mermaid，不用 ASCII art", style)
+        # A reported session read the clause as unambiguous yet still skipped
+        # Mermaid for a delivery-document diagram, because it sits under a
+        # section whose other lines only govern chat replies. The parenthetical
+        # names both channels so the section name cannot narrow the trigger.
+        self.assertIn("需要画图时（回复或交付文档）用 Mermaid，不用 ASCII art", style)
 
     def test_depth_clauses_demand_domain_methods_and_external_checks(self):
         # A task can be executed in an expert's vocabulary without using the
